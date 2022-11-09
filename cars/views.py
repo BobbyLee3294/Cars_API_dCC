@@ -6,7 +6,6 @@ from .models import Car
 
 @api_view(['GET','POST'])
 def cars_list(request):
-
     if request.method == 'GET':
         cars = Car.objects.all()
         serializer = CarSerializer(cars, many=True) # because we are using an all query(which would have many cars), set many to True
@@ -19,6 +18,10 @@ def cars_list(request):
 
 @api_view(['GET'])
 def car_detail(request, pk):
-
-    print(pk)
-    return Response(pk)
+    try:
+        car = Car.objects.get(pk=pk)
+        serializer = CarSerializer(car)
+        return Response(serializer.data)
+    except Car.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
