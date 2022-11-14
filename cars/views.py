@@ -8,7 +8,13 @@ from .models import Car
 @api_view(['GET','POST'])
 def cars_list(request):
     if request.method == 'GET':
+
+        dealership_name = request.query_params.get('dealership')
+        print(dealership_name)
         cars = Car.objects.all()
+        if dealership_name:
+            cars = cars.filter(dealership__name=dealership_name)
+
         serializer = CarSerializer(cars, many=True) # because we are using an all query(which would have many cars), set many to True
         return Response(serializer.data, status=status.HTTP_200_OK) # returns the data from the serializer as a response
 
